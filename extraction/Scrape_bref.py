@@ -15,7 +15,8 @@ import pandas as pd
 import requests
 
 FIRST_YEAR, LAST_YEAR = 1980, 2025          # sezonul de start (1980 = 1980-81)
-RAW_DIR = Path("../data/raw")
+ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = ROOT / "data" / "raw"
 HTML_DIR = RAW_DIR / "bref_html"
 OUT = RAW_DIR / "bref_team_ratings.csv"
 WANT = ["SRS", "ORtg", "DRtg", "Pace"]

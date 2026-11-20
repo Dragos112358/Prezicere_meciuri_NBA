@@ -1,0 +1,6 @@
+numpy
+pandas
+nba_api
+nbainjuries
+requests
+lxml

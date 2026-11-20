@@ -15,7 +15,8 @@ import pandas as pd
 import requests
 
 FIRST_YEAR, LAST_YEAR = 1980, 2025
-RAW_DIR = Path("../data/raw")
+ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = ROOT / "data" / "raw"
 HTML_DIR = RAW_DIR / "bref_html"
 OUT = RAW_DIR / "bref_player_advanced.csv"
 SLEEP = 4   # secunde intre cereri (limita BR ~20/min)

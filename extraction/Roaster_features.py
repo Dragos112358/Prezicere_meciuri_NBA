@@ -28,7 +28,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-RAW_DIR = Path("data/raw")
+ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = ROOT / "data" / "raw"
 INJ_DIR = RAW_DIR / "injuries"
 BPM_PATH = RAW_DIR / "bref_player_advanced.csv"
 

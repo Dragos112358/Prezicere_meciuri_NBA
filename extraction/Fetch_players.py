@@ -13,7 +13,8 @@ import pandas as pd
 from nba_api.stats.endpoints import leaguegamelog
 
 FIRST_YEAR, LAST_YEAR = 1980, 2025   # 1996-97 ... 2025-26 (date de jucatori consistente de aici)
-RAW_DIR = Path("../data/raw")
+ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = ROOT / "data" / "raw"
 RETRIES = 4
 
 

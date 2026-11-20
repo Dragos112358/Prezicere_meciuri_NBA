@@ -17,7 +17,8 @@ import pandas as pd
 from nbainjuries import injury
 
 FIRST_SEASON = 2019                      # raportul oficial in forma PDF disponibil de la 2021-22 (verifica)
-RAW_DIR = Path("../data/raw")
+ROOT = Path(__file__).resolve().parent.parent
+RAW_DIR = ROOT / "data" / "raw"
 INJ_DIR = RAW_DIR / "injuries"
 REPORT_TIMES = ((17, 30), (17, 0), (16, 0))   # ore incercate, in ordine
 SLEEP = 1.0
