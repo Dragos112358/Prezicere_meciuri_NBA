@@ -7,6 +7,16 @@ Repository-ul conține livrabilele pentru **Etapa 1 (intermediară)** a proiectu
 
 ## 1. Descrierea proiectului
 
+Proiectul urmărește pregătirea unui set de date istorice NBA care să permită analizarea factorilor asociați rezultatului unui meci și, în etapa finală, construirea unor modele de predicție.
+
+Problema este formulată ca o clasificare binară:
+
+- **Variabila țintă:** `HOME_WIN` — valoarea 1 indică o victorie a echipei gazdă, iar valoarea 0 indică o înfrângere a acesteia.
+- **Unitatea de analiză:** un meci din sezonul regulat NBA.
+- **Obiectivul proiectului:** investigarea relației dintre statisticile echipelor, forma recentă, programul meciurilor, odihnă și rezultatul final.
+
+Acest repository este dedicat Etapei 1: achiziția datelor, scripturile de extragere/preprocesare, descrierea datasetului și prezentările intermediare. Analiza exploratorie completă, antrenarea și compararea modelelor ML și analiza erorilor sunt planificate pentru Etapa 2 și nu sunt prezentate ca rezultate deja obținute.
+
 ## 2. Sursele și achiziția datelor
 
 Datele provin din surse publice și sunt colectate cu ajutorul bibliotecilor Python și al procesării paginilor HTML.
@@ -103,9 +113,69 @@ Prezicere_meciuri_NBA/
 
 ## 5. Instalare și configurare
 
+Este recomandată utilizarea Python 3.12 sau a unei versiuni compatibile cu pachetele din `requirements.txt`.
+
+### Linux / WSL
+
+Creează și activează un mediu virtual:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Instalează dependențele:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Pentru componenta `nbainjuries`, care folosește JPype și Java Virtual Machine, este necesar un Java Runtime Environment. În Ubuntu/WSL se poate instala astfel:
+
+```bash
+sudo apt update
+sudo apt install -y default-jre
+```
+
+Verificarea importurilor principale:
+
+```bash
+python -c "import numpy, pandas, nba_api, nbainjuries, requests; print('Importurile sunt OK')"
+```
+
 ## 6. Rularea scripturilor
 
+Comenzile se execută din directorul rădăcină al repository-ului.
+
+```bash
+python extraction/Fetch_games.py
+python extraction/Fetch_players.py
+python extraction/Scrape_bref.py
+python extraction/Scrape_bref_players.py
+python extraction/Fetch_injuries.py
+python extraction/Build_dataset.py
+```
+
+Scripturile de colectare verifică existența unor fișiere locale și pot sări peste fișierele care au fost deja descărcate. Prin urmare, mesajele de tipul „există deja, sar peste” indică faptul că fișierul respectiv este deja prezent.
+
+`Build_dataset.py` salvează rezultatul în `data/processed/games.csv`. Acest fișier este ignorat de Git în configurația repository-ului. Nu îl confunda cu `games_clean.csv`, descris în secțiunea 3.
+
+`Roaster_features.py` conține funcționalități suplimentare pentru caracteristici legate de lot și accidentări. În versiunea curentă, modulul nu este apelat automat de `Build_dataset.py`; integrarea acestor caracteristici în pipeline-ul principal rămâne de evaluat.
+
 ## 7. Analize planificate pentru Etapa 2
+
+În etapa finală sunt planificate următoarele activități:
+
+- analiza exploratorie a distribuției meciurilor și a calității datelor;
+- analiza avantajului terenului propriu și a evoluției statisticilor pe sezoane;
+- investigarea relației dintre caracteristicile echipelor și rezultatul meciurilor;
+- evaluarea influenței perioadelor de odihnă și a meciurilor consecutive;
+- antrenarea și compararea mai multor modele de clasificare;
+- evaluarea modelelor folosind metrici precum Accuracy, ROC-AUC, Log-loss și Brier Score;
+- analiza erorilor și a calibrării probabilităților.
+
+Aceste activități reprezintă direcții de lucru pentru Etapa 2; repository-ul de față nu include încă rezultatele EDA sau modelele antrenate.
 
 ## 8. Prezentări
 
