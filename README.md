@@ -76,12 +76,30 @@ Datasetul folosește o împărțire cronologică a meciurilor:
 
 **Notă privind fișierele procesate:** `Build_dataset.py` generează fișierul `data/processed/games.csv`. La testarea curentă, acesta a avut 47.218 rânduri și 178 de coloane. `games_clean.csv` este o versiune separată, cu 44.237 rânduri și 161 de coloane, folosită pentru descrierea datasetului din prezentarea Etapei 1. Cele două fișiere nu trebuie considerate identice. Fișierul `games.csv` este exclus din Git prin `.gitignore`; `games_clean.csv` este fișierul procesat păstrat în repository.
 
+### Rolul scriptului `Clean_dataset.py`
+
+`extraction/Clean_dataset.py` pornește de la `data/processed/games.csv`, generat de `Build_dataset.py`, și produce `data/processed/games_clean.csv`. Scriptul separă etapa de curățare și selecție a caracteristicilor de procesul de construire inițială a datasetului. El nu realizează analiza exploratorie și nu antrenează modele ML.
+
+Principalele operații efectuate sunt:
+
+- elimină sezoanele care conțin mai puțin de 100 de meciuri;
+- marchează sezoanele scurtate păstrate în dataset prin caracteristica `PARTIAL_SEASON`;
+- pentru subsetul de training, elimină meciurile de la începutul sezonului în care cel puțin una dintre echipe nu are încă 5 meciuri jucate (`GAMES_PLAYED < 5`); această filtrare nu este aplicată subseturilor de validation și testing;
+- tratează valorile lipsă și creează indicatorul `NO_PREV` pentru situațiile în care lipsesc anumite informații istorice;
+- limitează `REST_DAYS` la maximum 5 zile, pentru a reduce influența valorilor extreme;
+- exclude `GAMES_PLAYED` din setul final de caracteristici, precum și caracteristicile constante sau aproape constante;
+- elimină caracteristici redundante atunci când diferențele dintre echipe (`D_*`) au o corelație de cel puțin 0,95;
+- stabilește selecția caracteristicilor folosind numai subsetul de training, apoi păstrează aceeași selecție pentru validation și testing.
+
+La final, scriptul salvează datasetul curățat în `data/processed/games_clean.csv`, păstrând separat informațiile despre meci, țintă și subsetul temporal, precum și caracteristicile în format `H_*`, `A_*` și `D_*`. Scriptul acceptă și argumentele `--data` și `--clean-out`, prin care pot fi indicate explicit fișierul de intrare și cel de ieșire.
+
 ## 4. Structura repository-ului
 
 ```text
 Prezicere_meciuri_NBA/
 ├── extraction/
 │   ├── Build_dataset.py
+│   ├── Clean_dataset.py
 │   ├── Fetch_games.py
 │   ├── Fetch_injuries.py
 │   ├── Fetch_players.py
@@ -155,11 +173,18 @@ python extraction/Scrape_bref.py
 python extraction/Scrape_bref_players.py
 python extraction/Fetch_injuries.py
 python extraction/Build_dataset.py
+python extraction/Clean_dataset.py
 ```
 
 Scripturile de colectare verifică existența unor fișiere locale și pot sări peste fișierele care au fost deja descărcate. Prin urmare, mesajele de tipul „există deja, sar peste” indică faptul că fișierul respectiv este deja prezent.
 
 `Build_dataset.py` salvează rezultatul în `data/processed/games.csv`. Acest fișier este ignorat de Git în configurația repository-ului. Nu îl confunda cu `games_clean.csv`, descris în secțiunea 3.
+
+`Clean_dataset.py` se rulează după `Build_dataset.py`: citește `data/processed/games.csv`, aplică operațiile de curățare și selecție descrise în secțiunea 3 și salvează rezultatul final în `data/processed/games_clean.csv`. Pentru alte locații de intrare sau ieșire pot fi folosite argumentele `--data` și `--clean-out`. De exemplu:
+
+```bash
+python extraction/Clean_dataset.py --data data/processed/games.csv --clean-out data/processed/games_clean.csv
+```
 
 `Roaster_features.py` conține funcționalități suplimentare pentru caracteristici legate de lot și accidentări. În versiunea curentă, modulul nu este apelat automat de `Build_dataset.py`; integrarea acestor caracteristici în pipeline-ul principal rămâne de evaluat.
 
